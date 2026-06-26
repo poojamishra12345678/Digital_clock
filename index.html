@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Digital Clock</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Nunito', sans-serif;
+    }
+
+    /* greeting */
+    .greeting {
+      font-size: 20px;
+      font-weight: 400;
+      color: #a0aec0;
+      margin-bottom: 14px;
+      letter-spacing: 1px;
+    }
+
+    /* main card */
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 30px;
+      padding: 50px 64px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      backdrop-filter: blur(10px);
+    }
+
+    /* time */
+    .time {
+      font-size: 96px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 6px;
+      line-height: 1;
+    }
+
+    .colon {
+      animation: blink 1s step-end infinite;
+      color: #63b3ed;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.1; }
+    }
+
+    .ampm {
+      font-size: 28px;
+      font-weight: 600;
+      color: #63b3ed;
+      margin-left: 8px;
+      vertical-align: super;
+    }
+
+    /* date */
+    .date {
+      font-size: 20px;
+      font-weight: 400;
+      color: #90cdf4;
+      letter-spacing: 2px;
+      text-align: center;
+    }
+
+    /* divider */
+    .divider {
+      width: 80%;
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+    }
+
+    /* info row */
+    .info-row {
+      display: flex;
+      gap: 40px;
+    }
+
+    .info-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .info-val {
+      font-size: 22px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .info-label {
+      font-size: 11px;
+      font-weight: 400;
+      color: #718096;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    /* footer */
+    .footer {
+      margin-top: 28px;
+      font-size: 13px;
+      color: #4a5568;
+      letter-spacing: 2px;
+    }
+
+    /* responsive */
+    @media (max-width: 500px) {
+      .card { padding: 36px 28px; }
+      .time { font-size: 58px; letter-spacing: 3px; }
+      .ampm { font-size: 20px; }
+      .info-row { gap: 24px; }
+      .date { font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+
+  <p class="greeting" id="greeting">Good Morning ☀️</p>
+
+  <div class="card">
+
+    <div class="time">
+      <span id="hh">12</span><span class="colon">:</span><span id="mm">00</span><span class="colon">:</span><span id="ss">00</span><span class="ampm" id="ampm">AM</span>
+    </div>
+
+    <div class="date" id="date">Monday, 1 January 2025</div>
+
+    <div class="divider"></div>
+
+    <div class="info-row">
+      <div class="info-box">
+        <span class="info-val" id="day-num">01</span>
+        <span class="info-label">Day</span>
+      </div>
+      <div class="info-box">
+        <span class="info-val" id="week-num">W01</span>
+        <span class="info-label">Week</span>
+      </div>
+      <div class="info-box">
+        <span class="info-val" id="year-num">2025</span>
+        <span class="info-label">Year</span>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="footer">Made by Pooja Mishra &nbsp;·&nbsp; BBDNIIT</p>
+
+  <script>
+    function pad(n) { return String(n).padStart(2, '0'); }
+
+    function getWeek(d) {
+      const start = new Date(d.getFullYear(), 0, 1);
+      return Math.ceil((((d - start) / 86400000) + start.getDay() + 1) / 7);
+    }
+
+    const DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+    function tick() {
+      const now  = new Date();
+      const h    = now.getHours();
+      const m    = now.getMinutes();
+      const s    = now.getSeconds();
+      const h12  = h % 12 || 12;
+      const ampm = h < 12 ? 'AM' : 'PM';
+
+      document.getElementById('hh').textContent   = pad(h12);
+      document.getElementById('mm').textContent   = pad(m);
+      document.getElementById('ss').textContent   = pad(s);
+      document.getElementById('ampm').textContent = ampm;
+
+      document.getElementById('date').textContent =
+        DAYS[now.getDay()] + ', ' + now.getDate() + ' ' + MONTHS[now.getMonth()] + ' ' + now.getFullYear();
+
+      document.getElementById('day-num').textContent  = pad(now.getDate());
+      document.getElementById('week-num').textContent = 'W' + pad(getWeek(now));
+      document.getElementById('year-num').textContent = now.getFullYear();
+
+      const g = h < 12 ? 'Good Morning ☀️' : h < 17 ? 'Good Afternoon 🌤️' : h < 21 ? 'Good Evening 🌆' : 'Good Night 🌙';
+      document.getElementById('greeting').textContent = g;
+    }
+
+    tick();
+    setInterval(tick, 1000);
+  </script>
+
+</body>
+</html>
